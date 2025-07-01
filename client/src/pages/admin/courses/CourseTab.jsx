@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Select,
@@ -20,14 +20,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useNavigate } from "react-router-dom";
+import {
+  useEditCourseMutation,
+  useGetCourseByIdQuery,
+} from "@/features/api/courseApi";
 import { Loader2 } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const CourseTab = () => {
   // const [category, setCategory] = useState("");
-  const isLoading = false
 
   const navigate = useNavigate();
+  const params = useParams();
+  const courseId = params.courseId;
+
+  const [editCourse, { data, isLoading, isSuccess, error }] =
+    useEditCourseMutation(courseId);
 
   const [input, setInput] = useState({
     courseTitle: "",
@@ -39,17 +48,37 @@ const CourseTab = () => {
     courseThumbnail: "",
   });
 
+  const { data: courseByIdData, courseByIdIsLoading } = useGetCourseByIdQuery(
+    courseId,
+    { refetchOnMountOrArgChange: true }
+  );
+
+  useEffect(() => {
+    if (courseByIdData?.course) {
+      const course = courseByIdData?.course;
+      setInput({
+        courseTitle: course.courseTitle,
+        subTitle: course.subTitle,
+        description: course.description,
+        category: course.category,
+        courseLevel: course.courseLevel,
+        coursePrice: course.coursePrice,
+        courseThumbnail: "",
+      });
+    }
+  }, [courseByIdData]);
+
   const [previewThumbnail, setPreviewThumbnail] = useState("");
 
   const selectThumbnail = (e) => {
     const file = e.target.files?.[0];
-    if(file){
-      setInput({...input, courseThumbnail:file});
+    if (file) {
+      setInput({ ...input, courseThumbnail: file });
       const fileReader = new FileReader();
       fileReader.onloadend = () => setPreviewThumbnail(fileReader.result);
       fileReader.readAsDataURL(file);
     }
-  }
+  };
 
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
@@ -57,16 +86,35 @@ const CourseTab = () => {
   };
 
   const selectCategory = (value) => {
-    setInput({...input, category:value})
-  }
+    setInput({ ...input, category: value });
+  };
 
   const selectCourseLevel = (value) => {
-    setInput({...input, courseLevel:value})
-  }
+    setInput({ ...input, courseLevel: value });
+  };
 
-  const updateCourseHandler = () => {
-    console.log(input);
-  }
+  const updateCourseHandler = async () => {
+    const formData = new FormData();
+    formData.append("courseTitle", input.courseTitle);
+    formData.append("subTitle", input.subTitle);
+    formData.append("description", input.description);
+    formData.append("category", input.category);
+    formData.append("courseLevel", input.courseLevel);
+    formData.append("coursePrice", input.coursePrice);
+    formData.append("courseThumbnail", input.courseThumbnail);
+    await editCourse({ formData, courseId });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data.message || "Course Updated Successfully.");
+    }
+    if (error) {
+      toast.error(error.data.message || "Failed to Update Course.");
+    }
+  }, [isSuccess, error]);
+
+  if (courseByIdIsLoading) return <h2>Loading...</h2>;
 
   const isPublished = false;
 
@@ -172,9 +220,9 @@ const CourseTab = () => {
               />
             </div>
           </div>
-            <div>
-              <Label>Course Thumbnail</Label>
-              <Input
+          <div>
+            <Label>Course Thumbnail</Label>
+            <Input
               type="file"
               onChange={selectThumbnail}
               accept="image/*"
@@ -187,8 +235,8 @@ const CourseTab = () => {
                 alt="Course Thumbnail"
               />
             )}
-            </div>
-            <div>
+          </div>
+          <div>
             <Button onClick={() => navigate("/admin/course")} variant="outline">
               Cancel
             </Button>

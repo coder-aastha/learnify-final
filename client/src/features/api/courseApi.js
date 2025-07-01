@@ -53,20 +53,20 @@ export const courseApi = createApi({
       }),
       providesTags: ["Refetch_Creator_Course"],
     }),
-    // editCourse: builder.mutation({
-    //   query: ({ formData, courseId }) => ({
-    //     url: `/${courseId}`,
-    //     method: "PUT",
-    //     body: formData,
-    //   }),
-    //   invalidatesTags: ["Refetch_Creator_Course"],
-    // }),
-    // getCourseById: builder.query({
-    //   query: (courseId) => ({
-    //     url: `/${courseId}`,
-    //     method: "GET",
-    //   }),
-    // }),
+    editCourse: builder.mutation({
+      query: ({ formData, courseId }) => ({
+        url: `/${courseId}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: ["Refetch_Creator_Course"],
+    }),
+    getCourseById: builder.query({
+      query: (courseId) => ({
+        url: `/${courseId}`,
+        method: "GET",
+      }),
+    }),
     // createLecture: builder.mutation({
     //   query: ({ lectureTitle, courseId }) => ({
     //     url: `/${courseId}/lecture`,
@@ -120,8 +120,8 @@ export const {
   // useGetSearchCourseQuery,
   // useGetPublishedCourseQuery,
   useGetCreatorCourseQuery,
-  // useEditCourseMutation,
-  // useGetCourseByIdQuery,
+  useEditCourseMutation,
+  useGetCourseByIdQuery,
   // useCreateLectureMutation,
   // useGetCourseLectureQuery,
   // useEditLectureMutation,
