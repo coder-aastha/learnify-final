@@ -1,4 +1,4 @@
-// EhN7zKrsNx3QyTGA
+// ZlTtfVlKLEAZ42AH
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLoginUserMutation, useRegisterUserMutation } from "@/features/api/authApi";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -43,6 +44,8 @@ const Login = () => {
     await action(inputData)
   }
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if(registerIsSuccess && registerData){
       toast.success(registerData.message || "Created Account Successfully.")
@@ -52,6 +55,7 @@ const Login = () => {
     }
     if(loginIsSuccess && loginData){
       toast.success(loginData.message || "Logged In Successfully.")
+      navigate("/")
     }
     if(loginError){
       toast.error(loginError.message || "Login Failed")

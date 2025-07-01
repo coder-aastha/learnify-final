@@ -26,6 +26,9 @@ app.use(cors({
 //apis
 app.use("/api/v1/user", userRoute);
 
+app.get('/api/v1/user/test', (req, res) => res.send('User API works'));
+
+
 app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`)
 })
