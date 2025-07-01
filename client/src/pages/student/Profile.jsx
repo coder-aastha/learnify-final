@@ -18,8 +18,8 @@ import {
 } from "@/features/api/authApi.js";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import Course from "./Course";
 import { toast } from "sonner";
+import Course from "./Course";
 
 import { useEffect } from "react";
 
@@ -29,7 +29,13 @@ const Profile = () => {
   const { data, isLoading, refetch } = useLoadUserQuery();
   const [
     updateUser,
-    { data: updateUserData, isLoading: updateUserIsLoading, isError, error, isSuccess },
+    {
+      data: updateUserData,
+      isLoading: updateUserIsLoading,
+      isError,
+      error,
+      isSuccess,
+    },
   ] = useUpdateUserMutation();
 
   const onChangeHandler = (e) => {
@@ -37,28 +43,30 @@ const Profile = () => {
     if (file) setProfilePhoto(file);
   };
 
-  const user = data?.user;
-  
+  const user = data && data.user;
+
   const updateUserHandler = async () => {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("profilePhoto", profilePhoto);
     await updateUser(formData);
   };
-  
-  
+
   useEffect(() => {
-    if(isSuccess){
+    refetch();
+  }, [refetch]);
+
+  useEffect(() => {
+    if (isSuccess) {
       refetch();
-      toast.success(data.message || "Profile Updated Successfully.")
+      toast.success(data.message || "Profile Updated Successfully.");
     }
-    if(isError){
-      toast.error(data.error || "Failed to Update Profile")
+    if (isError) {
+      toast.error(data.error || "Failed to Update Profile");
     }
-  }, [error, updateUserData, isSuccess, isError])
-  
+  }, [error, updateUserData, isSuccess, isError]);
+
   if (isLoading) return <h1 className="mt-24">Profile Loading...</h1>;
-  
 
   return (
     <div className="max-w-4xl mx-auto px-4 my-24">
@@ -67,7 +75,7 @@ const Profile = () => {
         <div className="flex flex-col items-center">
           <Avatar className="h-24 w-24 md:h-32 md:w-32 mb-4">
             <AvatarImage
-              src={user.photoUrl || "https://github.com/shadcn.png"}
+              src={user?.photoUrl || "https://github.com/shadcn.png"}
               alt="@shadcn"
             />
             <AvatarFallback>CN</AvatarFallback>

@@ -1,13 +1,17 @@
+import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import "./App.css";
-import Navbar from "./components/Navbar";
 import MainLayout from "./layout/MainLayout";
 import Login from "./pages/Login";
-import HeroSection from "./pages/student/HeroSection";
-import { RouterProvider } from "react-router";
+import Sidebar from "./pages/Sidebar";
+import Dashboard from "./pages/admin/Dashboard";
+import AddCourse from "./pages/admin/courses/AddCourse";
+import CourseTable from "./pages/admin/courses/CourseTable";
 import Courses from "./pages/student/Courses";
+import HeroSection from "./pages/student/HeroSection";
 import MyLearning from "./pages/student/MyLearning";
 import Profile from "./pages/student/Profile";
+import EditCourse from "./pages/admin/courses/EditCourse";
 
 const appRouter = createBrowserRouter([
   {
@@ -24,16 +28,40 @@ const appRouter = createBrowserRouter([
         ),
       },
       {
-        path:"login",
-        element:<Login />
+        path: "login",
+        element: <Login />,
       },
       {
-        path:"my-learning",
-        element:<MyLearning />
+        path: "my-learning",
+        element: <MyLearning />,
       },
       {
-        path:"profile",
-        element:<Profile />
+        path: "profile",
+        element: <Profile />,
+      },
+
+      //admin routes start from here
+      {
+        path: "admin",
+        element: <Sidebar />,
+        children: [
+          {
+            path: "dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "course",
+            element: <CourseTable />,
+          },
+          {
+            path: "course/create",
+            element: <AddCourse />,
+          },
+          {
+            path: "course/:courseId",
+            element: <EditCourse />,
+          },
+        ],
       },
     ],
   },
@@ -42,8 +70,7 @@ const appRouter = createBrowserRouter([
 function App() {
   return (
     <main>
-      <RouterProvider router={appRouter}/>
-
+      <RouterProvider router={appRouter} />
     </main>
   );
 }
