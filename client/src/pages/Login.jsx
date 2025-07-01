@@ -65,7 +65,7 @@ const Login = () => {
   return (
     <div className="flex justify-center w-full mt-20">
       <div className="flex max-w-sm flex-col gap-6 w-full">
-        <Tabs defaultValue="account">
+        <Tabs defaultValue="login">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
             <TabsTrigger value="login">Login</TabsTrigger>
