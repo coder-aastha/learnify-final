@@ -67,20 +67,20 @@ export const courseApi = createApi({
         method: "GET",
       }),
     }),
-    // createLecture: builder.mutation({
-    //   query: ({ lectureTitle, courseId }) => ({
-    //     url: `/${courseId}/lecture`,
-    //     method: "POST",
-    //     body: { lectureTitle },
-    //   }),
-    // }),
-    // getCourseLecture: builder.query({
-    //   query: (courseId) => ({
-    //     url: `/${courseId}/lecture`,
-    //     method: "GET",
-    //   }),
-    //   providesTags: ["Refetch_Lecture"],
-    // }),
+    createLecture: builder.mutation({
+      query: ({ lectureTitle, courseId }) => ({
+        url: `/${courseId}/lecture`,
+        method: "POST",
+        body: { lectureTitle },
+      }),
+    }),
+    getCourseLecture: builder.query({
+      query: (courseId) => ({
+        url: `/${courseId}/lecture`,
+        method: "GET",
+      }),
+      providesTags: ["Refetch_Lecture"],
+    }),
     // editLecture: builder.mutation({
     //   query: ({
     //     lectureTitle,
@@ -122,8 +122,8 @@ export const {
   useGetCreatorCourseQuery,
   useEditCourseMutation,
   useGetCourseByIdQuery,
-  // useCreateLectureMutation,
-  // useGetCourseLectureQuery,
+  useCreateLectureMutation,
+  useGetCourseLectureQuery,
   // useEditLectureMutation,
   // useRemoveLectureMutation,
   // useGetLectureByIdQuery,
