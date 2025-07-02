@@ -4,7 +4,7 @@ const COURSE_API = "http://localhost:8080/api/v1/course";
 
 export const courseApi = createApi({
   reducerPath: "courseApi",
-  tagTypes: ["Refetch_Creator_Course"],     //"Refetch_Lecture"
+  tagTypes: ["Refetch_Creator_Course", "Refetch_Lecture"],     //"Refetch_Lecture"
   baseQuery: fetchBaseQuery({
     baseUrl: COURSE_API,
     credentials: "include",
@@ -81,26 +81,26 @@ export const courseApi = createApi({
       }),
       providesTags: ["Refetch_Lecture"],
     }),
-    // editLecture: builder.mutation({
-    //   query: ({
-    //     lectureTitle,
-    //     videoInfo,
-    //     isPreviewFree,
-    //     courseId,
-    //     lectureId,
-    //   }) => ({
-    //     url: `/${courseId}/lecture/${lectureId}`,
-    //     method: "POST",
-    //     body: { lectureTitle, videoInfo, isPreviewFree },
-    //   }),
-    // }),
-    // removeLecture: builder.mutation({
-    //   query: (lectureId) => ({
-    //     url: `/lecture/${lectureId}`,
-    //     method: "DELETE",
-    //   }),
-    //   invalidatesTags: ["Refetch_Lecture"],
-    // }),
+    editLecture: builder.mutation({
+      query: ({
+        lectureTitle,
+        videoInfo,
+        isPreviewFree,
+        courseId,
+        lectureId,
+      }) => ({
+        url: `/${courseId}/lecture/${lectureId}`,
+        method: "POST",
+        body: { lectureTitle, videoInfo, isPreviewFree },
+      }),
+    }),
+    removeLecture: builder.mutation({
+      query: (lectureId) => ({
+        url: `/lecture/${lectureId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Refetch_Lecture"],
+    }),
     // getLectureById: builder.query({
     //   query: (lectureId) => ({
     //     url: `/lecture/${lectureId}`,
@@ -124,8 +124,8 @@ export const {
   useGetCourseByIdQuery,
   useCreateLectureMutation,
   useGetCourseLectureQuery,
-  // useEditLectureMutation,
-  // useRemoveLectureMutation,
+  useEditLectureMutation,
+  useRemoveLectureMutation,
   // useGetLectureByIdQuery,
   // usePublishCourseMutation,
 } = courseApi;
