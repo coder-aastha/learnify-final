@@ -15,7 +15,7 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { Progress } from '@/components/ui/progress';
-import { useEditLectureMutation, useRemoveLectureMutation } from '@/features/api/courseApi';
+import { useEditLectureMutation, useGetLectureByIdQuery, useRemoveLectureMutation } from '@/features/api/courseApi';
 import { useParams } from 'react-router-dom';
 
 const LectureTab = () => {
@@ -33,16 +33,16 @@ const LectureTab = () => {
   const { courseId, lectureId } = params;
 
 
-  // const {data:lectureData} = useGetLectureByIdQuery(lectureId);
-  // const lecture = lectureData?.lecture;
+  const {data:lectureData} = useGetLectureByIdQuery(lectureId);
+  const lecture = lectureData?.lecture;
 
-  // useEffect(()=>{
-  //   if(lecture){
-  //     setLectureTitle(lecture.lectureTitle);
-  //     setIsFree(lecture.isPreviewFree);
-  //     setUploadVideoInfo(lecture.videoInfo)
-  //   }
-  // },[lecture])
+  useEffect(()=>{
+    if(lecture){
+      setLectureTitle(lecture.lectureTitle);
+      setIsFree(lecture.isPreviewFree);
+      setUploadVideoInfo(lecture.videoInfo)
+    }
+  },[lecture])
 
   const [edtiLecture, { data, isLoading, error, isSuccess }] =
     useEditLectureMutation();
@@ -62,7 +62,7 @@ const LectureTab = () => {
         });
 
         if (res.data.success) {
-          console.log(res);
+          console.log("Video Url is",res);
           setUploadVideoInfo({
             videoUrl: res.data.data.url,
             publicId: res.data.data.public_id,
@@ -80,7 +80,6 @@ const LectureTab = () => {
   };
 
   const editLectureHandler = async () => {
-    console.log({ lectureTitle, uploadVideInfo, isFree, courseId, lectureId });
 
     await edtiLecture({
       lectureTitle,
@@ -153,7 +152,7 @@ const LectureTab = () => {
           />
         </div>
         <div className="flex items-center space-x-2 my-5">
-          <Switch id="airplane-mode" />
+          <Switch checked={isFree} onCheckedChange={setIsFree} id="airplane-mode" />
           <Label htmlFor="airplane-mode">Is this video FREE</Label>
         </div>
 

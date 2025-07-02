@@ -21,13 +21,14 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { useLogoutUserMutation } from "@/features/api/authApi";
-import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Separator } from "./ui/separator";
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
@@ -52,7 +53,11 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto hidden md:flex justify-between items-center gap-10 h-full">
         <div className="flex items-center gap-2">
           <School size="30" />
-          <h1 className="hidden md:block font-extrabold text-2xl">Learnify</h1>
+          <Link to="/">
+            <h1 className="hidden md:block font-extrabold text-2xl">
+              Learnify
+            </h1>
+          </Link>
         </div>
         {/* User Icon and Dark Mode Icon */}
         <div className="flex items-center gap-8">
@@ -102,7 +107,9 @@ const Navbar = () => {
 
       {/* Mobile device */}
       <div className="flex md:hidden items-center justify-between px-4 h-full">
-        <h1 className="font-extrabold text-2xl">Learnify</h1>
+        <Link to="/">
+          <h1 className="font-extrabold text-2xl">Learnify</h1>
+        </Link>
         <MobileNavbar user={user} />
       </div>
     </div>
@@ -111,14 +118,21 @@ const Navbar = () => {
 
 export default Navbar;
 
-const MobileNavbar = () => {
-  const role = "instructor";
+const MobileNavbar = ({ user }) => {
+  const navigate = useNavigate();
+  const [logoutUser] = useLogoutUserMutation();
+
+  const logoutHandler = async () => {
+    await logoutUser();
+    navigate("/login");
+  };
+
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button
           size="icon"
-          className="rounded-full bg-gray-200 hover:bg-gray-200"
+          className="rounded-full hover:bg-gray-200"
           variant="outline"
         >
           <Menu />
@@ -126,20 +140,29 @@ const MobileNavbar = () => {
       </SheetTrigger>
       <SheetContent className="flex flex-col">
         <SheetHeader className="flex flex-row items-center justify-between mt-2">
-          <SheetTitle>Learnify</SheetTitle>
+          <SheetTitle>
+            {" "}
+            <Link to="/">E-Learning</Link>
+          </SheetTitle>
           <DarkMode />
         </SheetHeader>
         <Separator className="mr-2" />
         <nav className="flex flex-col space-y-4 ml-4">
           <Link to="/my-learning">My Learning</Link>
           <Link to="/profile">Edit Profile</Link>
-          <p>Logout</p>
-          {role === "instructor" && (
-            <SheetFooter>
-              <Button type="submit">Dashboard</Button>
-            </SheetFooter>
-          )}
+          <p onClick={logoutHandler} className="cursor-pointer">
+            Log out
+          </p>
         </nav>
+        <Separator />
+        {user?.role === "instructor" && (
+              <Button
+                type="submit"
+                onClick={() => navigate("/admin/dashboard")}
+              >
+                Dashboard
+              </Button>
+        )}
       </SheetContent>
     </Sheet>
   );
